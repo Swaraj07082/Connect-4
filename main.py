@@ -58,6 +58,33 @@ def checkForWinner(chip):
 
     return False
 
+def coordinateParser(inputStr):
+    coordinate=[None]*2
+    if (inputStr[0]=="A"):
+        coordinate[1]==0
+    elif(inputStr[0]=="B"):
+        coordinate[1]==1
+    elif (inputStr[0] == "C"):
+        coordinate[1] == 2
+    elif (inputStr[0] == "D"):
+        coordinate[1] == 3
+    elif (inputStr[0] == "E"):
+        coordinate[1] == 4
+    elif (inputStr[0] == "F"):
+        coordinate[1] == 5
+    elif (inputStr[0] == "G"):
+        coordinate[1] == 6
+    else:
+        print("Invalid choice")
+    coordinate[0]=int(inputStr[1])
+    return coordinate
 
+def isSpaceAvailable(intended):
+    if(gameBoard[intended[0]][intended[1]]=='🔴'):
+        return False
+    elif(gameBoard[intended[0]][intended[1]]=='🔵'):
+        return False
+    else:
+        return True
 
 
