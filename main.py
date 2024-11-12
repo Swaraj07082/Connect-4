@@ -1,9 +1,12 @@
+import random
+
 print("\n          Welcome to Connect 4")
 print(" -----------------------------------------")
 
 
 rows = 6
 cols = 7
+possibleLetters = ["A","B","C","D","E","F","G"]
 
 gameBoard  = [["","","","","","","",],["","","","","","","",],["","","","","","","",],["","","","","","","",],["","","","","","","",],["","","","","","","",]]
 def printGameBoard():
@@ -24,7 +27,7 @@ def printGameBoard():
     print("\n   +----+----+----+----+----+----+----+")
 printGameBoard()
 
-def modifyTurn(spacePicked,turn):
+def modifyArray(spacePicked,turn):
     gameBoard[spacePicked[0]][spacePicked[1]]=turn
 
 def checkForWinner(chip):
@@ -98,3 +101,40 @@ def gravityChecker(intendedCoordinate):
   if(isSpaceAvailable(spaceBelow) == False):
     return True
   return False
+
+
+
+
+leaveLoop = False
+turnCounter = 0
+while(leaveLoop == False):
+  if(turnCounter % 2 == 0):
+    printGameBoard()
+    while True:
+      spacePicked = input("\nChoose a space: ")
+      coordinate = coordinateParser(spacePicked)
+      try:
+        ### Check if the space is available
+        if(isSpaceAvailable(coordinate) and gravityChecker(coordinate)):
+          modifyArray(coordinate, '🔵')
+          break
+        else:
+          print("Not a valid coordinate")
+      except:
+        print("Error occured. Please try again.")
+    winner = checkForWinner('🔵')
+    turnCounter += 1
+  ### It's the computers turn
+  else:
+    while True:
+      cpuChoice = [random.choice(possibleLetters), random.randint(0,5)]
+      cpuCoordinate = coordinateParser(cpuChoice)
+      if(isSpaceAvailable(cpuCoordinate) and gravityChecker(cpuCoordinate)):
+        modifyArray(cpuCoordinate, '🔴')
+        break
+    turnCounter += 1
+    winner = checkForWinner('🔴')
+
+  if(winner):
+    printGameBoard()
+    break
