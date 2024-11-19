@@ -78,6 +78,19 @@ def evaluate_board():
     PLAYER_TWO_IN_A_ROW = -10
     CENTER_COLUMN_BONUS = 3
 
+#     gameBoard = [
+#     ["", "", "", "🔴", "", "", ""],
+#     ["", "", "", "🔴", "", "", ""],
+#     ["", "", "", "", "", "", ""],
+#     ["", "", "", "🔵", "", "", ""],
+#     ["", "", "", "", "", "", ""],
+#     ["", "", "", "🔵", "", "", ""],
+# ]
+
+
+# center_column = ["🔴", "🔴", "", "🔵", "", "🔵"]
+
+
     center_column = [row[cols // 2] for row in gameBoard]
     center_score = center_column.count("🔴") * CENTER_COLUMN_BONUS
     score += center_score
@@ -118,10 +131,31 @@ def evaluate_window(window):
     return 0
 
 def minimax(board, depth, maximizingPlayer, alpha, beta):
+    #depth: The maximum depth to search in the game tree. This limits how many moves ahead we will look.
+
+    # maximizingPlayer: A boolean flag that indicates whether the current player is the maximizing player (AI) or the minimizing player (human). This allows the algorithm to alternate between maximizing and minimizing the evaluation function.
+    
+    #alpha: The best score that the maximizing player can guarantee so far. If the maximizing player can get a higher score than alpha, it updates alpha.
+
+    # beta: The best score that the minimizing player can guarantee so far. If the minimizing player can get a lower score than beta, it updates beta.
     if depth == 0 or checkForWinner("🔴") or checkForWinner("🔵"):
         return evaluate_board(), None
 
+#         evaluate_board(): A function that evaluates the current board's state and returns a score. The score represents how favorable the current state is for the maximizing player. A positive value usually means a good state for the AI, and a negative value means a good state for the human player.
+# None: The second value returned (best move) is None because there’s no specific move to recommend at this depth (it's a terminal state like a win/loss).
+
+
+
+
     valid_moves = [col for col in range(cols) if isSpaceAvailable((0, col))]
+
+    # valid_moves = [0, 2, 6]
+
+
+#     Row 0 is empty: If the top row (0) is empty, it means there is space in the column, and we can drop a piece there. Hence, isSpaceAvailable((0, col)) checks whether the top-most space is free.
+# Row 0 is occupied: If row 0 is occupied, we don't want to allow a piece to be placed there, but we know there may still be room lower down (in rows 1, 2, 3, etc.), so we check the next available row.
+
+
     best_move = random.choice(valid_moves)
 
     if maximizingPlayer:
@@ -139,6 +173,16 @@ def minimax(board, depth, maximizingPlayer, alpha, beta):
                 if beta <= alpha:
                     break
         return max_eval, best_move
+
+#         For each valid move: Loop through each column where a move can be made.
+# row = get_next_open_row(col): Get the next available row for the current column where the piece can be dropped.
+# board[row][col] = "🔴": Simulate making a move by placing the AI's token ("🔴") in the selected spot.
+# eval, _ = minimax(board, depth - 1, False, alpha, beta): Recursively call minimax to evaluate the next board state. The depth - 1 decreases the depth, and False indicates that it’s the minimizing player's turn next.
+# board[row][col] = "": Undo the move by resetting the board.
+# if eval > max_eval:: If the evaluation of this move is better than the current best evaluation, update max_eval and set this column as the best_move.
+# alpha = max(alpha, eval): Update alpha to be the maximum between the current alpha and the evaluation (eval). This keeps track of the best score the maximizing player can guarantee.
+# if beta <= alpha:: If beta (the best score the minimizing player can guarantee) is less than or equal to alpha, prune the remaining branches. There's no need to search further because the minimizing player will never let the maximizing player get a score better than alpha.
+# break: Stop searching further columns, as the rest are pruned.
     else:
         min_eval = float("inf")
         for col in valid_moves:
@@ -157,6 +201,19 @@ def minimax(board, depth, maximizingPlayer, alpha, beta):
 
 def get_next_open_row(col):
     for row in range(rows - 1, -1, -1):
+#         The range(rows - 1, -1, -1) creates a sequence of row indices starting from the bottom-most row (rows - 1) to the top row (0), moving in reverse order.
+# This ensures the function checks from the bottom of the column (where pieces naturally fall in Connect Four) upwards.
+
+
+# row 5: 🔴
+# row 4: 🔵
+# row 3: 
+# row 2: 
+# row 1: 
+# row 0: 
+# Starting at row 5, it checks gameBoard[5][2], which is "🔴". Not empty, so it moves to the next row.
+# At row 4, it checks gameBoard[4][2], which is "🔵". Not empty, so it moves again.
+# At row 3, it checks gameBoard[3][2], which is "". The condition is True, so it returns row 3.
         if gameBoard[row][col] == "":
             return row
     return None
